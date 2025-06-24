@@ -23,7 +23,6 @@ httpx==0.25.2
 
 # Validation and utilities
 email-validator==2.1.0
-python-phonenumbers==8.13.26
 
 # Development and testing
 pytest==7.4.3

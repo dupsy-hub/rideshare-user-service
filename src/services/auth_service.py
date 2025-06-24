@@ -1,7 +1,9 @@
+from datetime import datetime
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from fastapi import HTTPException, status
 from typing import Optional
+from datetime import datetime  # Add this line
 import structlog
 import redis.asyncio as redis
 import json

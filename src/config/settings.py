@@ -1,5 +1,5 @@
 from pydantic_settings import BaseSettings
-from pydantic import Field, validator
+from pydantic import Field, field_validator
 from typing import List
 from functools import lru_cache
 import os
@@ -52,27 +52,31 @@ class Settings(BaseSettings):
     # Health Check
     HEALTH_CHECK_TIMEOUT: int = Field(default=5, env="HEALTH_CHECK_TIMEOUT")
     
-    @validator("ALLOWED_HOSTS", pre=True)
+    @field_validator("ALLOWED_HOSTS", mode="before")
+    @classmethod
     def parse_allowed_hosts(cls, v):
         if isinstance(v, str):
             return [host.strip() for host in v.split(",")]
         return v
     
-    @validator("CORS_ORIGINS", pre=True)
+    @field_validator("CORS_ORIGINS", mode="before")
+    @classmethod
     def parse_cors_origins(cls, v):
         if isinstance(v, str):
             return [origin.strip() for origin in v.split(",")]
         return v
     
-    @validator("ALLOWED_IMAGE_TYPES", pre=True)
+    @field_validator("ALLOWED_IMAGE_TYPES", mode="before")
+    @classmethod
     def parse_allowed_image_types(cls, v):
         if isinstance(v, str):
             return [type_.strip() for type_ in v.split(",")]
         return v
     
-    class Config:
-        env_file = ".env"
-        case_sensitive = True
+    model_config = {
+        "env_file": ".env",
+        "case_sensitive": True
+    }
 
 @lru_cache()
 def get_settings() -> Settings:

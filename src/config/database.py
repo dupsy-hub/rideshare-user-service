@@ -23,14 +23,23 @@ async def init_db():
     
     settings = get_settings()
     
+    # Create engine configuration
+    engine_config = {
+        "echo": settings.DEBUG,
+        "future": True
+    }
+    
+    # Add pooling configuration only if not in debug mode
+    if settings.DEBUG:
+        engine_config["poolclass"] = NullPool
+    else:
+        engine_config["pool_size"] = settings.DATABASE_POOL_SIZE
+        engine_config["max_overflow"] = settings.DATABASE_MAX_OVERFLOW
+    
     # Create async engine
     engine = create_async_engine(
         settings.DATABASE_URL,
-        poolclass=NullPool if settings.DEBUG else None,
-        pool_size=settings.DATABASE_POOL_SIZE if not settings.DEBUG else 0,
-        max_overflow=settings.DATABASE_MAX_OVERFLOW if not settings.DEBUG else 0,
-        echo=settings.DEBUG,
-        future=True
+        **engine_config
     )
     
     # Create session factory

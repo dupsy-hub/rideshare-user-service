@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr, validator, Field
+from pydantic import BaseModel, EmailStr, field_validator, Field
 from typing import Optional, Literal
 from datetime import datetime, date
 from decimal import Decimal
@@ -8,15 +8,14 @@ import re
 # Base schemas
 class BaseResponse(BaseModel):
     """Base response model"""
-    class Config:
-        from_attributes = True
+    model_config = {"from_attributes": True}
 
 class ErrorResponse(BaseModel):
     """Standard error response"""
     error: dict
     
-    class Config:
-        schema_extra = {
+    model_config = {
+        "json_schema_extra": {
             "example": {
                 "error": {
                     "code": "USER_NOT_FOUND",
@@ -26,6 +25,7 @@ class ErrorResponse(BaseModel):
                 }
             }
         }
+    }
 
 # User schemas
 class UserCreate(BaseModel):
@@ -37,7 +37,8 @@ class UserCreate(BaseModel):
     phone: str = Field(..., min_length=10, max_length=20)
     role: Literal["rider", "driver", "admin"]
     
-    @validator("password")
+    @field_validator("password")
+    @classmethod
     def validate_password_strength(cls, v):
         """Validate password strength"""
         if len(v) < 8:
@@ -52,7 +53,8 @@ class UserCreate(BaseModel):
             raise ValueError("Password must contain at least one special character")
         return v
     
-    @validator("phone")
+    @field_validator("phone")
+    @classmethod
     def validate_phone(cls, v):
         """Validate phone number format"""
         # Remove any non-digit characters except +
@@ -61,7 +63,8 @@ class UserCreate(BaseModel):
             raise ValueError("Invalid phone number format")
         return cleaned
     
-    @validator("first_name", "last_name")
+    @field_validator("first_name", "last_name")
+    @classmethod
     def validate_names(cls, v):
         """Validate names"""
         if not v.strip():
@@ -103,7 +106,8 @@ class UserProfileCreate(BaseModel):
     country: Optional[str] = None
     preferred_language: Optional[str] = "en"
     
-    @validator("profile_image_url")
+    @field_validator("profile_image_url")
+    @classmethod
     def validate_image_url(cls, v):
         """Validate image URL"""
         if v and not re.match(r'^https?://.+\.(jpg|jpeg|png|gif|webp)$', v, re.IGNORECASE):
@@ -141,14 +145,16 @@ class DriverDetailsCreate(BaseModel):
     vehicle_color: Optional[str] = Field(None, max_length=30)
     license_plate: Optional[str] = Field(None, max_length=20)
     
-    @validator("license_number")
+    @field_validator("license_number")
+    @classmethod
     def validate_license_number(cls, v):
         """Validate license number format"""
         if not v.strip():
             raise ValueError("License number cannot be empty")
         return v.strip().upper()
     
-    @validator("license_plate")
+    @field_validator("license_plate")
+    @classmethod
     def validate_license_plate(cls, v):
         """Validate license plate format"""
         if v:
@@ -191,7 +197,8 @@ class UserUpdate(BaseModel):
     last_name: Optional[str] = Field(None, min_length=1, max_length=100)
     phone: Optional[str] = Field(None, min_length=10, max_length=20)
     
-    @validator("phone")
+    @field_validator("phone")
+    @classmethod
     def validate_phone(cls, v):
         """Validate phone number format"""
         if v:
@@ -201,7 +208,8 @@ class UserUpdate(BaseModel):
             return cleaned
         return v
     
-    @validator("first_name", "last_name")
+    @field_validator("first_name", "last_name")
+    @classmethod
     def validate_names(cls, v):
         """Validate names"""
         if v is not None:
