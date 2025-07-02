@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-app
+  namespace: microservices
+  labels:
+    app: user-microservice
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  selector:
+    matchLabels:
+      app: user-microservice
+  template:
+    metadata:
+      labels:
+        app: user-microservice
+    spec:
+      containers:
+        - name: user-service
+          image: teleiostejiriacr.azurecr.io/user-service:v1.1
+          ports:
+            - containerPort: 8000
+          envFrom:
+            - secretRef:
+                name: user-service-secrets
+          resources:
+            requests:
+              memory: "150Mi"
+              cpu: "100m"
+            limits:
+              memory: "200Mi"
+              cpu: "200m"
+          #readinessProbe:
+           # httpGet:
+            #  path: /api/users/ready
+            #  port: 8000
+            #initialDelaySeconds: 5
+            #periodSeconds: 10
+          #livenessProbe:
+           # httpGet:
+            #  path: /api/users/health
+             # port: 8000
+           # initialDelaySeconds: 5
+           # periodSeconds: 20

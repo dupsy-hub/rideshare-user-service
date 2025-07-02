@@ -2,6 +2,7 @@ import asyncio
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
 from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.pool import NullPool
+from sqlalchemy import text
 import structlog
 from contextlib import asynccontextmanager
 
@@ -104,7 +105,7 @@ async def check_db_health():
     try:
         async with get_db_session() as session:
             # Simple query to test connection
-            result = await session.execute("SELECT 1")
+            result = await session.execute(text("SELECT 1"))
             result.fetchone()
             return True
     except Exception as e:
