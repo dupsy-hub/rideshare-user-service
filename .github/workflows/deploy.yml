@@ -46,9 +46,8 @@ jobs:
           push: true
           platforms: linux/amd64,linux/arm64/v8
           tags: |
-            ${{ env.ACR_NAME }}.azurecr.io/${{ env.CONTAINER_NAME }}:${{ github.sha }}
-            ${{ env.ACR_NAME }}.azurecr.io/${{ env.CONTAINER_NAME }}:$IMAGE_TAG
-
+            ${{ env.ACR_URL }}/${{ env.CONTAINER_NAME }}:${{ github.sha }}
+            ${{ env.ACR_URL }}/${{ env.CONTAINER_NAME }}:${{ env.IMAGE_TAG }}
       - name: 🔐 Create or Update Kubernetes Secret
         run: |
           kubectl create secret generic user-service-secrets \
