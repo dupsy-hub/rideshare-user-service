@@ -1,12 +1,12 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: user-app
-  namespace: microservices
+  name: user-service
+  namespace: rideshare
   labels:
-    app: user-microservice
+    app: user-service
 spec:
-  replicas: 1
+  replicas: 2
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -14,15 +14,15 @@ spec:
       maxSurge: 1
   selector:
     matchLabels:
-      app: user-microservice
+      app: user-service
   template:
     metadata:
       labels:
-        app: user-microservice
+        app: user-service
     spec:
       containers:
         - name: user-service
-          image: teleiostejiriacr.azurecr.io/user-service:v1.1
+          image: teleiosdupeacr01.azurecr.io/user-service:v1.0
           ports:
             - containerPort: 8000
           envFrom:
@@ -36,14 +36,14 @@ spec:
               memory: "200Mi"
               cpu: "200m"
           #readinessProbe:
-           # httpGet:
-            #  path: /api/users/ready
-            #  port: 8000
-            #initialDelaySeconds: 5
-            #periodSeconds: 10
+          # httpGet:
+          #  path: /api/users/ready
+          #  port: 8000
+          #initialDelaySeconds: 5
+          #periodSeconds: 10
           #livenessProbe:
-           # httpGet:
-            #  path: /api/users/health
-             # port: 8000
-           # initialDelaySeconds: 5
-           # periodSeconds: 20
+          # httpGet:
+          #  path: /api/users/health
+          # port: 8000
+          # initialDelaySeconds: 5
+          # periodSeconds: 20
