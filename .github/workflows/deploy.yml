@@ -39,13 +39,15 @@ jobs:
           resource-group: ${{ env.AKS_RESOURCE_GROUP }}
           cluster-name: ${{ env.AKS_CLUSTER_NAME }}
 
-      - name: 🛠️ Build Docker Image
-        run: |
-          docker build -t $ACR_URL/$CONTAINER_NAME:$IMAGE_TAG .
-
-      - name: 🚀 Push Image to ACR
-        run: |
-          docker push $ACR_URL/$CONTAINER_NAME:$IMAGE_TAG
+      - name: 🛠️ Build & Push Multi-Arch Image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          platforms: linux/amd64,linux/arm64/v8
+          tags: |
+            ${{ env.ACR_NAME }}.azurecr.io/${{ env.CONTAINER_NAME }}:${{ github.sha }}
+            ${{ env.ACR_NAME }}.azurecr.io/${{ env.CONTAINER_NAME }}:$IMAGE_TAG
 
       - name: 🔐 Create or Update Kubernetes Secret
         run: |
