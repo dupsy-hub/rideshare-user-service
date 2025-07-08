@@ -43,8 +43,14 @@ jobs:
           push: true
           platforms: linux/amd64,linux/arm64/v8
           tags: |
-            ${{ env.ACR_URL }}/${{ env.CONTAINER_NAME }}:${{ github.sha }}
             ${{ env.ACR_URL }}/${{ env.CONTAINER_NAME }}:${{ env.IMAGE_TAG }}
+            ${{ env.ACR_URL }}/${{ env.CONTAINER_NAME }}:latest
+
+      - name: ☸️ Set AKS Context
+        uses: azure/aks-set-context@v3
+        with:
+          resource-group: ${{ env.AKS_RESOURCE_GROUP }}
+          cluster-name: ${{ env.AKS_CLUSTER_NAME }}
 
       - name: 🔐 Create or Update Kubernetes Secret
         run: |
@@ -56,20 +62,16 @@ jobs:
             --dry-run=client -o yaml | kubectl apply -f -
 
       - name: 🧩 Apply Deployment Manifest
-        run: |
-          kubectl apply -f k8s/deployment.yaml -n $NAMESPACE
+        run: kubectl apply -f k8s/deployment.yaml -n $NAMESPACE
 
       - name: 📡 Apply Service Manifest
-        run: |
-          kubectl apply -f k8s/service.yaml -n $NAMESPACE
+        run: kubectl apply -f k8s/service.yaml -n $NAMESPACE
 
       - name: 📈 Apply HPA Manifest
-        run: |
-          kubectl apply -f k8s/hpa.yaml -n $NAMESPACE
+        run: kubectl apply -f k8s/hpa.yaml -n $NAMESPACE
 
       - name: 🛡️ Apply PDB Manifest
-        run: |
-          kubectl apply -f k8s/pdb.yaml -n $NAMESPACE
+        run: kubectl apply -f k8s/pdb.yaml -n $NAMESPACE
 
       - name: 🚢 Update Image in Deployment
         if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/release')
