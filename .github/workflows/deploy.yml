@@ -13,8 +13,8 @@ env:
   AKS_RESOURCE_GROUP: teleios-dupe-rg
   AKS_CLUSTER_NAME: rideshare-aks-cluster
   CONTAINER_NAME: user-service
-  DEPLOYMENT_NAME: user-service # ✅ Make sure this matches your actual deployment name
-  NAMESPACE: rideshare # ✅ Update to the correct namespace you're using
+  DEPLOYMENT_NAME: user-service
+  NAMESPACE: rideshare
   IMAGE_TAG: ${{ github.sha }}
 
 jobs:
@@ -55,6 +55,10 @@ jobs:
             --from-literal=JWT_SECRET_KEY="${{ secrets.JWT_SECRET_KEY }}" \
             --namespace=$NAMESPACE \
             --dry-run=client -o yaml | kubectl apply -f -
+
+      - name: 🧩 Apply Deployment Manifest (Ensure Deployment Exists)
+        run: |
+          kubectl apply -f k8s/deployment.yaml -n $NAMESPACE
 
       - name: 🚢 Deploy to AKS
         if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/release')
