@@ -61,6 +61,11 @@ jobs:
             --namespace=$NAMESPACE \
             --dry-run=client -o yaml | kubectl apply -f -
 
+      - name: ✅ Verify Secret Exists
+        run: |
+          echo "Verifying Kubernetes secret..."
+          kubectl get secret user-service-secrets -n $NAMESPACE -o yaml
+
       - name: 🧩 Apply Deployment Manifest
         run: kubectl apply -f k8s/deployment.yaml -n $NAMESPACE
 
