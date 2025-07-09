@@ -51,7 +51,13 @@ class Settings(BaseSettings):
     
     # Health Check
     HEALTH_CHECK_TIMEOUT: int = Field(default=5, env="HEALTH_CHECK_TIMEOUT")
-    
+
+    # Validators
+    @field_validator("DATABASE_URL", mode="before")
+    @classmethod
+    def strip_database_url(cls, v):
+        return v.strip() if isinstance(v, str) else v
+
     @field_validator("ALLOWED_HOSTS", mode="before")
     @classmethod
     def parse_allowed_hosts(cls, v):
