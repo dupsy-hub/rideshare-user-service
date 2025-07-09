@@ -41,9 +41,9 @@ spec:
               port: 8000
             initialDelaySeconds: 5
             periodSeconds: 10
-          livenessProbe:
-            httpGet:
-              path: /api/users/health
-              port: 8000
-            initialDelaySeconds: 5
-            periodSeconds: 20
+          # livenessProbe:
+          #   httpGet:
+          #     path: /api/users/health
+          #     port: 8000
+          #   initialDelaySeconds: 5
+          #   periodSeconds: 20
