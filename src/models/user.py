@@ -59,7 +59,8 @@ class UserProfile(Base):
     __tablename__ = "user_profiles"
     
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    #user_id = Column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     profile_image_url = Column(String(500), nullable=True)
     date_of_birth = Column(DateTime, nullable=True)
     address = Column(Text, nullable=True)
@@ -95,7 +96,8 @@ class DriverDetails(Base):
     __tablename__ = "driver_details"
     
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    #user_id = Column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     license_number = Column(String(50), unique=True, nullable=False)
     vehicle_make = Column(String(50), nullable=True)
     vehicle_model = Column(String(50), nullable=True)
