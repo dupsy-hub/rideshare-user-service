@@ -40,26 +40,6 @@ spec:
                   name: rideshare-secrets
                   key: USER_DATABASE_URL
 
-            # 👇 Redis and JWT
-            - name: REDIS_URL
-              valueFrom:
-                secretKeyRef:
-                  name: rideshare-secrets
-                  key: REDIS_URL
-
-            - name: JWT_SECRET_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: rideshare-secrets
-                  key: JWT_SECRET_KEY
-
-            # 👇 Static infra metadata
-            - name: AKS_RESOURCE_GROUP
-              value: teleios-dupe-rg
-
-            - name: AKS_CLUSTER_NAME
-              value: rideshare-aks-cluster
-
           resources:
             requests:
               memory: "150Mi"
