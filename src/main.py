@@ -58,6 +58,10 @@ app = FastAPI(
     openapi_url="/api/users/openapi.json",
     lifespan=lifespan
 )
+@app.get("/api/users/health")
+def health():
+    return {"status": "ok"}
+
 
 settings = get_settings()
 
