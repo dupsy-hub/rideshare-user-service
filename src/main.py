@@ -9,7 +9,11 @@ import uuid
 
 from src.config.database import create_tables, close_db_connection
 from src.config.settings import get_settings
-from src.routes import auth, users, health
+#from src.routes import auth, users, health
+from src.routes.auth import router as auth_router
+from src.routes.users import router as users_router
+from src.routes.health import router as health_router
+
 
 # Configure structured logging
 structlog.configure(
@@ -58,9 +62,14 @@ app = FastAPI(
     openapi_url="/api/users/openapi.json",
     lifespan=lifespan
 )
+# @app.get("/api/users/health")
+# def health():
+#     return {"status": "ok"}
+
 @app.get("/api/users/health")
-def health():
+def health_status():
     return {"status": "ok"}
+
 
 
 settings = get_settings()
@@ -120,9 +129,14 @@ async def security_headers_middleware(request: Request, call_next):
     return response
 
 # Include routers
-app.include_router(health.router, prefix="/api/users", tags=["Health"])
-app.include_router(auth.router, prefix="/api/users", tags=["Authentication"])
-app.include_router(users.router, prefix="/api/users", tags=["Users"])
+# app.include_router(health.router, prefix="/api/users", tags=["Health"])
+# app.include_router(auth.router, prefix="/api/users", tags=["Authentication"])
+# app.include_router(users.router, prefix="/api/users", tags=["Users"])
+
+app.include_router(health_router, prefix="/api/users", tags=["Health"])
+app.include_router(auth_router, prefix="/api/users", tags=["Authentication"])
+app.include_router(users_router, prefix="/api/users", tags=["Users"])
+
 
 @app.get("/")
 async def root():
